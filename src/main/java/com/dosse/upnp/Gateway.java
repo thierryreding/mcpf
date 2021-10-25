@@ -150,7 +150,7 @@ public class Gateway {
         }
     }
 
-    public boolean openPort(int port, boolean udp) {
+    public boolean openPort(int port, boolean udp, String description) {
         if (port < 0 || port > 65535) {
             throw new IllegalArgumentException("Invalid port");
         }
@@ -161,7 +161,7 @@ public class Gateway {
         params.put("NewExternalPort", "" + port);
         params.put("NewInternalPort", "" + port);
         params.put("NewEnabled", "1");
-        params.put("NewPortMappingDescription", "WaifUPnP");
+        params.put("NewPortMappingDescription", description);
         params.put("NewLeaseDuration", "0");
         try {
             Map<String, String> r = command("AddPortMapping", params);
@@ -169,6 +169,10 @@ public class Gateway {
         } catch (Exception ex) {
             return false;
         }
+    }
+
+    public boolean openPort(int port, boolean udp) {
+        return openPort(port, udp, "WaifUPnP");
     }
 
     public boolean closePort(int port, boolean udp) {
@@ -187,7 +191,7 @@ public class Gateway {
         }
     }
 
-    public boolean isMapped(int port, boolean udp) {
+    public boolean isMapped(int port, boolean udp, String description) {
         if (port < 0 || port > 65535) {
             throw new IllegalArgumentException("Invalid port");
         }
@@ -200,11 +204,22 @@ public class Gateway {
             if (r.get("errorCode") != null) {
                 throw new Exception();
             }
-            return r.get("NewInternalPort") != null;
+
+            if (r.get("NewInternalPort") == null) {
+                return false;
+            }
+
+            if (description != null && r.get("NewPortMappingDescription") != description) {
+                return false;
+            }
         } catch (Exception ex) {
             return false;
         }
 
+        return true;
     }
 
+    public boolean isMapped(int port, boolean udp) {
+        return isMapped(port, udp, null);
+    }
 }

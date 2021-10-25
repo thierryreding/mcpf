@@ -32,7 +32,7 @@ import java.util.LinkedList;
  *
  * @author Federico
  */
-abstract class GatewayFinder {
+public abstract class GatewayFinder {
 
     private static final String[] SEARCH_MESSAGES;
 

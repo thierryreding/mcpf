@@ -37,7 +37,7 @@ import org.w3c.dom.traversal.NodeIterator;
  * 
  * @author Federico
  */
-class Gateway {
+public class Gateway {
 
     private Inet4Address iface;
     private InetAddress routerip;

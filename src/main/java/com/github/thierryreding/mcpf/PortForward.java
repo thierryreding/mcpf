@@ -2,11 +2,11 @@ package com.github.thierryreding.mcpf;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.ScreenOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +48,7 @@ public class PortForward extends GatewayFinder
     }
 
     @SubscribeEvent
-    public void onServerStopped(FMLServerStoppedEvent event) {
+    public void onServerStopped(ServerStoppedEvent event) {
         if (this.port > 0) {
             LOGGER.info("removing port forward for {}", this.port);
             this.gateway.closePort(this.port,  false);
@@ -56,13 +56,13 @@ public class PortForward extends GatewayFinder
     }
 
     @SubscribeEvent
-    public void replaceGui(GuiOpenEvent event) {
-        Screen gui = event.getGui();
+    public void replaceGui(ScreenOpenEvent event) {
+        Screen screen = event.getScreen();
 
-        if (gui instanceof net.minecraft.client.gui.screens.ShareToLanScreen) {
+        if (screen instanceof net.minecraft.client.gui.screens.ShareToLanScreen) {
             Minecraft minecraft = Minecraft.getInstance();
-            gui = new ShareToLanScreen(minecraft.screen, this);
-            event.setGui(gui);
+            screen = new ShareToLanScreen(minecraft.screen, this);
+            event.setScreen(screen);
         }
     }
 }
